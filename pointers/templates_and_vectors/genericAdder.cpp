@@ -18,7 +18,7 @@ public:
     T sum(){
         T total = 0;
         for (auto i = 0; i < data.size(); i++){
-            total = data[i] + total;
+            total += data[i];
         }
         return total;
     }

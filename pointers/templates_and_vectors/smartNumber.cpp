@@ -14,7 +14,8 @@ public:
         return SmartNumber(this->value + rhs.value);
     }
     const T operator+=(const SmartNumber<T>& rhs){
-        return SmartNumber(this + rhs.value);
+        SmartNumber<T> result(this->value);
+        return result + rhs;
     }
 private:
     T value;
