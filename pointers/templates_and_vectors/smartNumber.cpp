@@ -6,23 +6,25 @@ class SmartNumber {
 public:
     SmartNumber(T val): value(val){}
     
-    operator T() const {
-        return this->value;
-    }
+    //friend std::ostream& operator<< (std::ostream& lhs, const SmartNumber<T> &rhs);
     
     const T operator+(const SmartNumber<T>& rhs){
         return SmartNumber(this->value + rhs.value);
     }
-    const T operator+=(const SmartNumber<T>& rhs){
-        SmartNumber<T> result(this->value);
-        return result + rhs;
+    SmartNumber<T>& operator+=(const SmartNumber<T>& rhs){
+        this->value = this->value + rhs.value;
+        return *this;
+    }
+    
+    T getValue() const{
+        return this->value;
     }
 private:
     T value;
 };
 
-//template<typename T>
-//const T operator += (const T &lhs, const SmartNumber<T> &rhs){
-//    std::cout<<"HELLO";
-//    return rhs + lhs;
-//}
+template<typename T>
+std::ostream& operator<< (std::ostream& lhs, const SmartNumber<T> &rhs){
+    lhs<<rhs.getValue();
+    return lhs;
+}
