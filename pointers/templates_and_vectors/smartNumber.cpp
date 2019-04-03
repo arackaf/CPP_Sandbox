@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <iostream>
 
 template<typename T>
 class SmartNumber {
@@ -20,3 +20,9 @@ public:
 private:
     T value;
 };
+
+//template<typename T>
+//const T operator += (const T &lhs, const SmartNumber<T> &rhs){
+//    std::cout<<"HELLO";
+//    return rhs + lhs;
+//}

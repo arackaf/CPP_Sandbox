@@ -19,6 +19,8 @@ public:
         T total = 0;
         for (auto i = 0; i < data.size(); i++){
             total += data[i];
+            //total = total + data[i];
+            //total = data[i] + total;
         }
         return total;
     }
