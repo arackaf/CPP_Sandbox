@@ -9,8 +9,7 @@
 /* Begin PBXBuildFile section */
 		E6DEA7022253CC2D00224999 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA7012253CC2D00224999 /* main.cpp */; };
 		E6DEA70D2253CEC600224999 /* myVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA70B2253CEC600224999 /* myVector.cpp */; };
-		E6DEA70F2253DD2F00224999 /* dumbNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA70E2253DD2F00224999 /* dumbNumber.cpp */; };
-		E6DEA7112253E11D00224999 /* smartNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA7102253E11D00224999 /* smartNumber.cpp */; };
+		E6DEA713225E919F00224999 /* thing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA712225E919F00224999 /* thing.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,8 +28,7 @@
 		E6DEA6FE2253CC2D00224999 /* vector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vector; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6DEA7012253CC2D00224999 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		E6DEA70B2253CEC600224999 /* myVector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = myVector.cpp; sourceTree = "<group>"; };
-		E6DEA70E2253DD2F00224999 /* dumbNumber.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dumbNumber.cpp; sourceTree = "<group>"; };
-		E6DEA7102253E11D00224999 /* smartNumber.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = smartNumber.cpp; sourceTree = "<group>"; };
+		E6DEA712225E919F00224999 /* thing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thing.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,8 +63,7 @@
 			children = (
 				E6DEA7012253CC2D00224999 /* main.cpp */,
 				E6DEA70B2253CEC600224999 /* myVector.cpp */,
-				E6DEA70E2253DD2F00224999 /* dumbNumber.cpp */,
-				E6DEA7102253E11D00224999 /* smartNumber.cpp */,
+				E6DEA712225E919F00224999 /* thing.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -127,10 +124,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6DEA7112253E11D00224999 /* smartNumber.cpp in Sources */,
 				E6DEA7022253CC2D00224999 /* main.cpp in Sources */,
-				E6DEA70F2253DD2F00224999 /* dumbNumber.cpp in Sources */,
 				E6DEA70D2253CEC600224999 /* myVector.cpp in Sources */,
+				E6DEA713225E919F00224999 /* thing.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
