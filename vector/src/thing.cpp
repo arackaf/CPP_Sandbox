@@ -12,7 +12,7 @@ public:
         return data;
     }
     ~Thing(){
-        cout<<"Destroy"<<std::endl;
+        //cout<<"Destroy"<<std::endl;
     }
     
 private:
