@@ -7,13 +7,26 @@ using std::cout;
 using std::endl;
 
 int main(int argc, const char * argv[]) {
-    MyVector<Thing> intVectorFilterMapReduce({1, 2, 3, 4, 5, 6, 7});
+    MyVector<Thing> intVectorFilterMap({1, 2, 3, 4, 5, 6, 7});
     
-    MyVector<Thing>* filtered = intVectorFilterMapReduce
+    MyVector<Thing>* filtered = intVectorFilterMap
                                     .filter([](const Thing &val) { return val.val() % 2 == 0; })
                                     ->map([](const Thing &item) { return Thing(item.val() * 2); });
     
+    
     filtered->forEach([](Thing &item) { cout<<item.val()<<endl; });
+    
+    cout<<"----------------------------"<<endl;
+
+    
+    MyVector<Thing> intVectorFilterMapReduce({1, 2, 3, 4, 5, 6, 7});
+    
+    int sum = intVectorFilterMapReduce
+                .filter([](const Thing &val) { return val.val() % 2 == 0; })
+                ->map([](const Thing &item) { return Thing(item.val() * 2); })
+                ->reduce<int>([](int val, const Thing &item) { return val + item.val(); }, 0);
+    
+    cout<<"SUM = "<<sum<<endl<<endl;
     
     /*
     std::vector<Thing> vT = std::vector<Thing>();

@@ -41,7 +41,7 @@ public:
 
     MyVector* filter(std::function<bool(const T&)> test){
         MyVector<T> *result = new MyVector<T>;
-        this->forEach([=](T item){
+        this->forEach([&](T item){
             if (test(item)){
                 result->push_back(item);
             }
@@ -51,8 +51,17 @@ public:
 
     MyVector* map(std::function<const T&(const T&)> mapFn){
         MyVector<T> *result = new MyVector<T>;
-        this->forEach([=](T item){
+        this->forEach([&](T item){
             result->push_back(mapFn(item));
+        });
+        return result;
+    }
+    
+    template <typename TVal>
+    TVal reduce(std::function<TVal(TVal prev, const T&)> reducerFn, TVal initial){
+        TVal result = initial;
+        this->forEach([&](T item, size_t index){
+            result = reducerFn(result, item);
         });
         return result;
     }
