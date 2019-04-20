@@ -1,12 +1,47 @@
 #include <iostream>
 #include "myVector.cpp"
 #include "thing.cpp"
-
+#include <vector>
 
 using std::cout;
 using std::endl;
 
 int main(int argc, const char * argv[]) {
+    MyVector<Thing> intVectorFilterMapReduce({1, 2, 3, 4, 5, 6, 7});
+    
+    MyVector<Thing>* filtered = intVectorFilterMapReduce
+                                    .filter([](const Thing &val) { return val.val() % 2 == 0; })
+                                    ->map([](const Thing &item) { return Thing(item.val() * 2); });
+    
+    filtered->forEach([](Thing &item) { cout<<item.val()<<endl; });
+    
+    /*
+    std::vector<Thing> vT = std::vector<Thing>();
+    
+    Thing ta = Thing(9);
+    Thing tb = Thing(8);
+    Thing tc = Thing(7);
+    Thing td = Thing(6);
+    
+    vT.push_back(ta);
+    vT[0] = tb;
+    vT[0] = tc;
+    
+    cout<<"------------------"<<endl<<"Done with stl vector"<<endl<<endl;
+    
+    Thing t1 = Thing(9);
+    Thing t2 = Thing(8);
+    Thing t3 = Thing(7);
+    Thing t4 = Thing(6);
+    
+    MyVector<Thing> testReplace({});
+    
+    testReplace[0] = t1;
+    testReplace[1] = t1;
+    testReplace[2] = t1;
+    
+    cout<<"_______"<<endl<<endl;
+    
     MyVector<Thing> intVector({1, 2, 3});
     
     intVector.push_back(4);
@@ -19,8 +54,11 @@ int main(int argc, const char * argv[]) {
     MyVector<Thing> intVectorE({1, 2, 3});
     
     intVectorE.emplace_back(4);
+    cout<<"Emplace 4"<<endl;
     intVectorE.emplace_back(5);
+    cout<<"Emplace 5"<<endl;
     intVectorE.emplace_back(6);
+    cout<<"Emplace 6"<<endl;
     intVectorE.emplace_back(7);
     intVectorE.forEach([](Thing &val) { cout<<val.val(); });
     cout<<"EMPLACE_BACK DONE"<<endl<<endl;
@@ -52,6 +90,8 @@ int main(int argc, const char * argv[]) {
     //intVector[1] = 99;
     
     //cout<<intVector[0].val()<<intVector[1].val()<<intVector[2].val()<<endl;
+     
+     */
 
     return 0;
 }

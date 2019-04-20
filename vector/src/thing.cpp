@@ -8,7 +8,7 @@ class Thing {
 public:
     Thing(int val): data(val){}
     
-    int val(){
+    int val() const{
         return data;
     }
     ~Thing(){

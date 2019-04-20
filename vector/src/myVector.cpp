@@ -8,9 +8,10 @@ using std::endl;
 template<typename T>
 class MyVector {
 public:
+    MyVector() : MyVector(10) {}
     MyVector(size_t size){
-        currentSize = size;
-        maxSize = currentSize * 2;
+        currentSize = 0;
+        maxSize = size;
         currentMembers = operator new[](maxSize * sizeof(T));
     }
     MyVector(const std::initializer_list<T> &items){
@@ -27,7 +28,6 @@ public:
     
     MyVector& push_back(const T& item){
         sizeAsNeeded();
-        //TODO: this can't be right, can it?
         (*this)[currentSize++] = item;
         return *this;
     }
@@ -39,9 +39,24 @@ public:
         return *this;
     }
 
-    MyVector filter(std::function<bool(T&)>){
-        return ((T*)currentMembers)[index];
+    MyVector* filter(std::function<bool(const T&)> test){
+        MyVector<T> *result = new MyVector<T>;
+        this->forEach([=](T item){
+            if (test(item)){
+                result->push_back(item);
+            }
+        });
+        return result;
     }
+
+    MyVector* map(std::function<const T&(const T&)> mapFn){
+        MyVector<T> *result = new MyVector<T>;
+        this->forEach([=](T item){
+            result->push_back(mapFn(item));
+        });
+        return result;
+    }
+
     
     T& operator[](size_t index){
         return ((T*)currentMembers)[index];
