@@ -9,12 +9,12 @@ using std::endl;
 int main(int argc, const char * argv[]) {
     MyVector<Thing> intVectorFilterMap({1, 2, 3, 4, 5, 6, 7});
     
-    MyVector<Thing>* filtered = intVectorFilterMap
+    MyVector<Thing> filtered = intVectorFilterMap
                                     .filter([](const Thing &val) { return val.val() % 2 == 0; })
-                                    ->map([](const Thing &item) { return Thing(item.val() * 2); });
+                                    .map([](const Thing &item) { return Thing(item.val() * 2); });
+
     
-    
-    filtered->forEach([](Thing &item) { cout<<item.val()<<endl; });
+    filtered.forEach([](Thing &item) { cout<<item.val()<<endl; });
     
     cout<<"----------------------------"<<endl;
 
@@ -23,8 +23,8 @@ int main(int argc, const char * argv[]) {
     
     int sum = intVectorFilterMapReduce
                 .filter([](const Thing &val) { return val.val() % 2 == 0; })
-                ->map([](const Thing &item) { return Thing(item.val() * 2); })
-                ->reduce<int>([](int val, const Thing &item) { return val + item.val(); }, 0);
+                .map([](const Thing &item) { return Thing(item.val() * 2); })
+                .reduce<int>([](int val, const Thing &item) -> int { return val + item.val(); }, 0);
     
     cout<<"SUM = "<<sum<<endl<<endl;
     

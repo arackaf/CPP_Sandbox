@@ -39,20 +39,20 @@ public:
         return *this;
     }
 
-    MyVector* filter(std::function<bool(const T&)> test){
-        MyVector<T> *result = new MyVector<T>;
-        this->forEach([&](T item){
+    MyVector<T> filter(std::function<bool(const T&)> test){
+        MyVector<T> result;
+        forEach([&](T item){
             if (test(item)){
-                result->push_back(item);
+                result.push_back(item);
             }
         });
         return result;
     }
 
-    MyVector* map(std::function<const T&(const T&)> mapFn){
-        MyVector<T> *result = new MyVector<T>;
-        this->forEach([&](T item){
-            result->push_back(mapFn(item));
+    MyVector<T> map(std::function<const T&(const T&)> mapFn){
+        MyVector<T> result;
+        forEach([&](T item){
+            result.push_back(mapFn(item));
         });
         return result;
     }
@@ -60,12 +60,17 @@ public:
     template <typename TVal>
     TVal reduce(std::function<TVal(TVal prev, const T&)> reducerFn, TVal initial){
         TVal result = initial;
-        this->forEach([&](T item, size_t index){
+        forEach([&](T item, size_t index){
             result = reducerFn(result, item);
         });
         return result;
     }
 
+    
+    T pop_back(size_t i) {
+        T result = std::move(this[i]);
+        return result;
+    }
     
     T& operator[](size_t index){
         return ((T*)currentMembers)[index];
