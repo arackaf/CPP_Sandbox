@@ -5,6 +5,21 @@ using std::vector;
 using std::cout;
 using std::endl;
 
+namespace rstl {
+
+template<typename Iterator, typename T>
+Iterator find(Iterator begin, Iterator end, const T &value) {
+    while (begin != end){
+        if (*begin == value){
+            return begin;
+        }
+        begin++;
+    }
+    return end;
+}
+    
+}
+
 template<typename T>
 class MyVector {
 public:
@@ -24,6 +39,13 @@ public:
         for (it = items.begin(); it != items.end(); ++it){
             new((T*)currentMembers + i++) T(*it);
         }
+    }
+    
+    T* begin(){
+        return &((T*)currentMembers)[0];
+    }
+    T* end(){
+        return &((T*)currentMembers)[currentSize];
     }
     
     MyVector& push_back(const T& item){
