@@ -1,50 +1,57 @@
+#include <vector>
+#include <initializer_list>
 #include <iostream>
 #include "myVector.cpp"
 #include "thing.cpp"
-#include <vector>
 
 using std::cout;
 using std::endl;
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char *argv[])
+{
     MyVector<int> intVector({1, 2, 3, 4, 5, 6, 7});
     MyVector<Thing> intVectorFilterMap({1, 2, 3, 4, 5, 6, 7});
-    
+
     MyVector<Thing> filtered = intVectorFilterMap
-                                    .filter([](const Thing &val) { return val.val() % 2 == 0; })
-                                    .map([](const Thing &item) { return Thing(item.val() * 2); });
+                                   .filter([](const Thing &val) { return val.val() % 2 == 0; })
+                                   .map([](const Thing &item) { return Thing(item.val() * 2); });
 
-    
-    filtered.forEach([](Thing &item) { cout<<item.val()<<endl; });
-    
-    cout<<"----------------------------"<<endl;
+    filtered.forEach([](Thing &item) { cout << item.val() << endl; });
 
-    
+    cout << "----------------------------" << endl;
+
     MyVector<Thing> intVectorFilterMapReduce({1, 2, 3, 4, 5, 6, 7});
-    
+
     int sum = intVectorFilterMapReduce
-                .filter([](const Thing &val) { return val.val() % 2 == 0; })
-                .map([](const Thing &item) { return Thing(item.val() * 2); })
-                .reduce<int>([](int val, const Thing &item) -> int { return val + item.val(); }, 0);
-    
-    cout<<"SUM = "<<sum<<endl<<endl;
-    
-    cout<<"----------------------------"<<endl;
-    
+                  .filter([](const Thing &val) { return val.val() % 2 == 0; })
+                  .map([](const Thing &item) { return Thing(item.val() * 2); })
+                  .reduce<int>([](int val, const Thing &item) -> int { return val + item.val(); }, 0);
+
+    cout << "SUM = " << sum << endl
+         << endl;
+
+    cout << "----------------------------" << endl;
+
     auto target = rstl::find(intVector.begin(), intVector.end(), 4);
-    if (target != intVector.end()){
-        cout<<"FOUND: "<<(*target);
-    } else {
-        cout<<"NOT FOUND: "<<4;
+    if (target != intVector.end())
+    {
+        cout << "FOUND: " << (*target);
+    }
+    else
+    {
+        cout << "NOT FOUND: " << 4;
     }
 
     target = rstl::find(intVector.begin(), intVector.end(), 99);
-    if (target != intVector.end()){
-        cout<<"FOUND: "<<(*target);
-    } else {
-        cout<<"NOT FOUND: "<<99;
+    if (target != intVector.end())
+    {
+        cout << "FOUND: " << (*target);
     }
-    
+    else
+    {
+        cout << "NOT FOUND: " << 99;
+    }
+
     /*
     std::vector<Thing> vT = std::vector<Thing>();
     

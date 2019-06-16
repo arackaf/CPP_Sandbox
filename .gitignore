@@ -1,3 +1,6 @@
 pointers/pointers.xcodeproj
 .DS_Store
 UserInterfaceState.xcuserstate
+vector/src/myVector.dSYM
+vector/src/main.dSYM
+main
