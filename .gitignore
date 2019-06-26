@@ -4,3 +4,6 @@ UserInterfaceState.xcuserstate
 vector/src/myVector.dSYM
 vector/src/main.dSYM
 main
+vector/src/test/filterMapReduce/lambda.dSYM
+lambda
+myVector
