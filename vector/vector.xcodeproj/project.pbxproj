@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E65EE33F22DB943D006BEB15 /* filter.h in Sources */ = {isa = PBXBuildFile; fileRef = E65EE33D22DB943D006BEB15 /* filter.h */; };
+		E65EE34122DB95F7006BEB15 /* filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E65EE34022DB95F7006BEB15 /* filter.cpp */; };
 		E6DEA7022253CC2D00224999 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA7012253CC2D00224999 /* main.cpp */; };
 		E6DEA70D2253CEC600224999 /* myVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA70B2253CEC600224999 /* myVector.cpp */; };
 		E6DEA713225E919F00224999 /* thing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6DEA712225E919F00224999 /* thing.cpp */; };
@@ -25,6 +27,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E65EE33D22DB943D006BEB15 /* filter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = filter.h; sourceTree = "<group>"; };
+		E65EE34022DB95F7006BEB15 /* filter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filter.cpp; sourceTree = "<group>"; };
 		E6DEA6FE2253CC2D00224999 /* vector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vector; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6DEA7012253CC2D00224999 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		E6DEA70B2253CEC600224999 /* myVector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = myVector.cpp; sourceTree = "<group>"; };
@@ -64,6 +68,8 @@
 				E6DEA7012253CC2D00224999 /* main.cpp */,
 				E6DEA70B2253CEC600224999 /* myVector.cpp */,
 				E6DEA712225E919F00224999 /* thing.cpp */,
+				E65EE33D22DB943D006BEB15 /* filter.h */,
+				E65EE34022DB95F7006BEB15 /* filter.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -125,6 +131,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6DEA7022253CC2D00224999 /* main.cpp in Sources */,
+				E65EE33F22DB943D006BEB15 /* filter.h in Sources */,
+				E65EE34122DB95F7006BEB15 /* filter.cpp in Sources */,
 				E6DEA70D2253CEC600224999 /* myVector.cpp in Sources */,
 				E6DEA713225E919F00224999 /* thing.cpp in Sources */,
 			);

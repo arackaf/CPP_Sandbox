@@ -6,11 +6,29 @@
 
 #include "test/filterMapReduce/lambda.cpp"
 
+#include "filter.h"
+
 using std::cout;
 using std::endl;
 
 int main(int argc, const char *argv[])
 {
+    PersonTable pt;
+    Filter<int> f{ pt.age, 12, "==" };
+
+    // Query q = pt.RunFilter
+    // (
+    //     f
+    //     //pt.firstName == "Adam",
+        
+    // );
+    Query q = pt.RunFilter
+    (
+        //pt.firstName == std::string("Adam"),
+        pt.age < 40
+    );
+    
+    return 0;
     VectorTest::run();
 
     return 0;
