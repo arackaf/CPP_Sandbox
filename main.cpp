@@ -9,11 +9,15 @@ using namespace rstl::Tuple;
 using std::cout;
 using std::endl;
 
+struct Junk
+{
+};
+
 int main(int argc, const char *argv[])
 {
-    tuple t1 = make_tuple(1.1, 7.2, 9.3f);
+    tuple t1 = make_tuple(1, 7.2, 9.3f);
 
-    auto d = get<1>(t1);
+    double d = get<1>(t1);
     auto f = get<2>(t1);
 
     std::cout << ((d == 7.2) ? "true" : "false") << ((d == 7) ? "true" : "false") << std::endl;

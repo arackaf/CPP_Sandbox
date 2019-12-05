@@ -38,7 +38,7 @@ struct tuple_element
   {
     val = tuple_element<I - 1, Rest...>{t.tail}.val;
   }
-  Head val;
+  typename tuple_element<I - 1, Rest...>::Type val;
 };
 
 template <typename Head, typename... Rest>
