@@ -52,7 +52,7 @@ struct tuple_element<0, Head, Rest...>
 template <unsigned I, typename... Types>
 typename tuple_element<I, Types...>::Type get(const tuple<Types...> &t)
 {
-  return tuple_element<I, Types...>(t).val;
+  return tuple_element<I, Types...>{t}.val;
 }
 
 } // namespace Tuple
