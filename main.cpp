@@ -16,6 +16,9 @@ struct Junk
 template <typename Arg, typename... Args>
 void doPrint(Arg&& arg, Args&&... args)
 {
+    auto t = make_tuple(args...);
+    std::cout<<"\n\n"<<get<1>(t)<<"\n\n";
+
     std::cout << std::forward<Arg>(arg);
     ((std::cout << ',' << std::forward<Args>(args)), ...);
 }
@@ -35,7 +38,7 @@ int main(int argc, const char *argv[])
 
     tuple t2 = make_tuple(1, 2, 3, 4, 5, 6, 7, 8);
 
-    showTupleVals(t2, rstl::make_index_list<5>::result{});
+    showTupleVals(t2, rstl::make_index_list<5>{});
 
     // std::cout << ((d == 7.2) ? "true" : "false") << ((d == 7) ? "true" : "false") << std::endl;
     // std::cout << ((f == 9.3f) ? "true" : "false") << ((f == 9) ? "true" : "false") << std::endl;

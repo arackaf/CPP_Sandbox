@@ -11,7 +11,7 @@
         "-g",
         "-std=c++17",
         "-stdlib=libc++",
-        "${file}",
+        "${fileDirname}/main.cpp",
         "-o",
         "${fileDirname}/${fileBasenameNoExtension}"
       ],

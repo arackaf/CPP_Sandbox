@@ -15,9 +15,7 @@ struct make_helper<N, N, Is...>{
 };
 
 template <size_t N>
-struct make_index_list{
-    using result = typename make_helper<0, N - 1, 0>::result;
-};
+using make_index_list = typename make_helper<0, N - 1, 0>::result;
 
 namespace Tuple
 {
