@@ -1,6 +1,24 @@
 namespace rstl
 {
 
+template <size_t... Is>
+struct Index_List{};
+
+template <size_t Last, size_t N, size_t... Is>
+struct make_helper{
+    using result = typename make_helper<Last + 1, N, Is..., Last + 1>::result;
+};
+
+template <size_t N, size_t... Is>
+struct make_helper<N, N, Is...>{
+    using result = Index_List<Is...>;
+};
+
+template <size_t N>
+struct make_index_list{
+    using result = typename make_helper<0, N - 1, 0>::result;
+};
+
 namespace Tuple
 {
 
