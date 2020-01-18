@@ -16,11 +16,14 @@ struct Junk
 template <typename Arg, typename... Args>
 void doPrint(Arg&& arg, Args&&... args)
 {
-    auto t = make_tuple(args...);
-    std::cout<<"\n\n"<<get<1>(t)<<"\n\n";
-
     std::cout << std::forward<Arg>(arg);
     ((std::cout << ',' << std::forward<Args>(args)), ...);
+}
+
+template <typename... Args>
+void doPrintPassthrough(Args&&... args)
+{
+    doPrint(args...);
 }
 
 template <typename Tuple, size_t... Is>
@@ -29,16 +32,41 @@ void showTupleVals(const Tuple &t, const rstl::Index_List<Is...> &)
     doPrint(get<Is>(t)...);
 }
 
+template <typename ...Ts>
+void printTuple(const rstl::Tuple::tuple<Ts...> &t)
+{
+    std::cout<<"Printing Tuple\n\n";
+    showTupleVals(t, rstl::make_index_list<rstl::Tuple::tuple<Ts...>::length>{});
+}
+
+template <typename ...As, size_t ...IndexesA, typename ...Bs, size_t ...IndexesB>
+rstl::Tuple::tuple<As..., Bs...> tuple_catImpl(rstl::Tuple::tuple<As...> &tupleA, rstl::Index_List<IndexesA...> &, rstl::Tuple::tuple<Bs...> &tupleB, rstl::Index_List<IndexesB...> &){
+    return rstl::Tuple::make_tuple(rstl::Tuple::get<IndexesA>(tupleA)..., rstl::Tuple::get<IndexesB>(tupleB)...);
+}
+
+template <typename ...As, typename ...Bs>
+rstl::Tuple::tuple<As..., Bs...> tuple_cat(rstl::Tuple::tuple<As...> &tupleA, rstl::Tuple::tuple<Bs...> &tupleB){
+    auto AIndexes = rstl::make_index_list<rstl::Tuple::tuple<As...>::length>{};
+    auto BIndexes = rstl::make_index_list<rstl::Tuple::tuple<Bs...>::length>{};
+
+    return tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes);
+}
+
 int main(int argc, const char *argv[])
 {
+    //doPrintPassthrough("Hello", "There", 1, 2, 3, 4.5, "Fool");
+
     tuple t1 = make_tuple(1, 7.2, 9.3f);
 
     double d = get<1>(t1);
     auto f = get<2>(t1);
 
-    tuple t2 = make_tuple(1, 2, 3, 4, 5, 6, 7, 8);
+    tuple t2 = make_tuple(1, 2, 3, 4);
+    
 
-    showTupleVals(t2, rstl::make_index_list<5>{});
+    printTuple(tuple_cat(t1, t2));
+
+    //showTupleVals(t2, rstl::make_index_list<5>{});
 
     // std::cout << ((d == 7.2) ? "true" : "false") << ((d == 7) ? "true" : "false") << std::endl;
     // std::cout << ((f == 9.3f) ? "true" : "false") << ((f == 9) ? "true" : "false") << std::endl;
