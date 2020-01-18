@@ -39,32 +39,44 @@ void printTuple(const rstl::Tuple::tuple<Ts...> &t)
     showTupleVals(t, rstl::make_index_list<rstl::Tuple::tuple<Ts...>::length>{});
 }
 
-template <typename ...As, size_t ...IndexesA, typename ...Bs, size_t ...IndexesB>
-rstl::Tuple::tuple<As..., Bs...> tuple_catImpl(rstl::Tuple::tuple<As...> &tupleA, rstl::Index_List<IndexesA...> &, rstl::Tuple::tuple<Bs...> &tupleB, rstl::Index_List<IndexesB...> &){
+template <typename TupleA, size_t ...IndexesA, typename TupleB, size_t ...IndexesB>
+decltype(auto) tuple_catImpl(TupleA &tupleA, rstl::Index_List<IndexesA...> &, TupleB &tupleB, rstl::Index_List<IndexesB...> &){
     return rstl::Tuple::make_tuple(rstl::Tuple::get<IndexesA>(tupleA)..., rstl::Tuple::get<IndexesB>(tupleB)...);
 }
 
-template <typename ...As, typename ...Bs>
-rstl::Tuple::tuple<As..., Bs...> tuple_cat(rstl::Tuple::tuple<As...> &tupleA, rstl::Tuple::tuple<Bs...> &tupleB){
-    auto AIndexes = rstl::make_index_list<rstl::Tuple::tuple<As...>::length>{};
-    auto BIndexes = rstl::make_index_list<rstl::Tuple::tuple<Bs...>::length>{};
+template <typename TupleA, typename TupleB>
+decltype(auto) tuple_cat(TupleA &tupleA, TupleB &tupleB)
+{
+    auto AIndexes = rstl::make_index_list<TupleA::length>{};
+    auto BIndexes = rstl::make_index_list<TupleB::length>{};
 
     return tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes);
+}
+
+template <typename TupleA, typename TupleB, typename ...Rest>
+decltype(auto) tuple_cat(TupleA &tupleA, TupleB &tupleB, Rest ...rest)
+{
+    auto AIndexes = rstl::make_index_list<TupleA::length>{};
+    auto BIndexes = rstl::make_index_list<TupleB::length>{};
+
+    //no time for rvalue reference overloads
+    auto temp = tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes);
+    return tuple_cat(temp, rest...);
 }
 
 int main(int argc, const char *argv[])
 {
     //doPrintPassthrough("Hello", "There", 1, 2, 3, 4.5, "Fool");
 
-    tuple t1 = make_tuple(1, 7.2, 9.3f);
+    tuple t1 = make_tuple(7.2, 9.3f);
 
-    double d = get<1>(t1);
-    auto f = get<2>(t1);
+    //double d = get<1>(t1);
+    //auto f = get<2>(t1);
 
-    tuple t2 = make_tuple(1, 2, 3, 4);
+    tuple t2 = make_tuple(2.1f, 5);
     
 
-    printTuple(tuple_cat(t1, t2));
+    printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
 
     //showTupleVals(t2, rstl::make_index_list<5>{});
 
