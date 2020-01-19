@@ -40,28 +40,27 @@ void printTuple(const rstl::Tuple::tuple<Ts...> &t)
 }
 
 template <typename TupleA, size_t ...IndexesA, typename TupleB, size_t ...IndexesB>
-decltype(auto) tuple_catImpl(TupleA &tupleA, rstl::Index_List<IndexesA...> &, TupleB &tupleB, rstl::Index_List<IndexesB...> &){
+decltype(auto) tuple_catImpl(TupleA &&tupleA, rstl::Index_List<IndexesA...> &, TupleB &&tupleB, rstl::Index_List<IndexesB...> &)
+{
     return rstl::Tuple::make_tuple(rstl::Tuple::get<IndexesA>(tupleA)..., rstl::Tuple::get<IndexesB>(tupleB)...);
 }
 
 template <typename TupleA, typename TupleB>
-decltype(auto) tuple_cat(TupleA &tupleA, TupleB &tupleB)
+decltype(auto) tuple_cat(TupleA &&tupleA, TupleB &&tupleB)
 {
-    auto AIndexes = rstl::make_index_list<TupleA::length>{};
-    auto BIndexes = rstl::make_index_list<TupleB::length>{};
+    auto AIndexes = rstl::make_index_list<std::remove_reference_t<TupleA>::length>{};
+    auto BIndexes = rstl::make_index_list<std::remove_reference_t<TupleB>::length>{};
 
     return tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes);
 }
 
 template <typename TupleA, typename TupleB, typename ...Rest>
-decltype(auto) tuple_cat(TupleA &tupleA, TupleB &tupleB, Rest ...rest)
+decltype(auto) tuple_cat(TupleA &&tupleA, TupleB &&tupleB, Rest ...rest)
 {
-    auto AIndexes = rstl::make_index_list<TupleA::length>{};
-    auto BIndexes = rstl::make_index_list<TupleB::length>{};
+    auto AIndexes = rstl::make_index_list<std::remove_reference_t<TupleA>::length>{};
+    auto BIndexes = rstl::make_index_list<std::remove_reference_t<TupleB>::length>{};
 
-    //no time for rvalue reference overloads
-    auto temp = tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes);
-    return tuple_cat(temp, rest...);
+    return tuple_cat(tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes), rest...);
 }
 
 int main(int argc, const char *argv[])
