@@ -63,6 +63,34 @@ decltype(auto) tuple_cat(TupleA &&tupleA, TupleB &&tupleB, Rest ...rest)
     return tuple_cat(tuple_catImpl(tupleA, AIndexes, tupleB, BIndexes), rest...);
 }
 
+template <size_t ...Is>
+decltype(auto) indexListToTuple(rstl::Index_List<Is...> IL)
+{
+    return make_tuple(Is...);
+}
+
+template <typename ...Tuples>
+decltype(auto) flatten(Tuples ...tuples)
+{
+}
+
+template <typename ...Tuples>
+decltype(auto) XXX(Tuples ...tuples)
+{
+    decltype(auto) tupleOfTuples = make_tuple(tuples...);
+    decltype(auto) tuplesIndexLists = make_tuple(indexListToTuple(rstl::make_index_list<Tuples::length>{})...);
+
+    //decltype(auto) x = make_tuple(rstl::make_repeat_index_list<tuples)
+
+    //decltype(auto) allTuplesIndexLists = make_tuple(rstl::make_index_list<Tuples::length>{}...);  
+
+    return 0;
+    // return XYZ(tuples, tuplesIndexList);  
+}
+
+
+
+
 int main(int argc, const char *argv[])
 {
     //doPrintPassthrough("Hello", "There", 1, 2, 3, 4.5, "Fool");
@@ -74,6 +102,9 @@ int main(int argc, const char *argv[])
 
     tuple t2 = make_tuple(2.1f, 5);
     
+    XXX(t1, t2);
+
+    tuple tCounter = make_tuple(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
 
     printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
 

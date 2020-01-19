@@ -10,20 +10,37 @@ struct FunctionMetadata<ReturnType(*)(FuncArgs...)> {
 };
 
 template <size_t... Is>
-struct Index_List{};
-
-template <size_t Last, size_t N, size_t... Is>
-struct make_helper{
-    using result = typename make_helper<Last + 1, N, Is..., Last + 1>::result;
+struct Index_List{
+  constexpr static size_t Size = sizeof...(Is);
 };
 
-template <size_t N, size_t... Is>
-struct make_helper<N, N, Is...>{
+template <size_t Last, size_t N, template<size_t> typename NextValue, size_t... Is>
+struct make_helper{
+    using result = typename make_helper<Last + 1, N, NextValue, Is..., NextValue<Last>::Value>::result;
+};
+
+template <size_t N, template <size_t> class NextValue, size_t... Is>
+struct make_helper<N, N, NextValue, Is...>{
     using result = Index_List<Is...>;
 };
 
+template <size_t Last>
+struct Increment
+{
+  constexpr static size_t Value = Last + 1;
+};
+
+template <size_t Last>
+struct Repeat
+{
+  constexpr static size_t Value = Last;
+};
+
 template <size_t N>
-using make_index_list = typename make_helper<0, N - 1, 0>::result;
+using make_index_list = typename make_helper<0, N - 1, Increment, 0>::result;
+
+template <size_t Value, size_t Count>
+using make_repeat_index_list = typename make_helper<0, Count - 1, Repeat, Value>::result;
 
 namespace Tuple
 {
