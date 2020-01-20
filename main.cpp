@@ -97,28 +97,35 @@ int main(int argc, const char *argv[])
 
     tuple t1 = make_tuple(7.2, 9.3f, 9.9f);
 
+    rstl::Tuple::tuple<double, float, float> t1Copy { t1 };
+    std::cout<<rstl::Tuple::get<0>(t1Copy)<<" ";
+    std::cout<<rstl::Tuple::get<1>(t1Copy)<<" ";
+    std::cout<<rstl::Tuple::get<2>(t1Copy)<<" ";
+    std::cout<<"\n\n-------\n\n";
     //double d = get<1>(t1);
     //auto f = get<2>(t1);
 
-    tuple t2 = make_tuple(2.1f, 5, 9);
+    tuple t2 = make_tuple(2.1f, 5);
     
     XXX(t1, t2);
 
-    rstl::Index_List junk = rstl::make_repeat_index_list_from_tuples<decltype(make_tuple(t1, t2))>{};
+    //decltype(auto) junk = rstl::make_repeat_index_list_from_tuples<rstl::Tuple::tuple<rstl::Tuple::tuple<float, double, int>, rstl::Tuple::tuple<float, int>>>{};
+    decltype(auto) junk = rstl::make_repeat_index_list_from_tuples<decltype(make_tuple(make_tuple(1, 2, 3, 4, 5, 6, 7, 8), t2, t1, t2, make_tuple(1, 2, 3, 4, 5)))>{};
 
 
-    rstl::Tuple::tuple<rstl::Tuple::tuple<double, float, float>, rstl::Tuple::tuple<float, int, int>> ABC = make_tuple(t1, t2);
-    std::cout<<rstl::Tuple::get<0>(rstl::Tuple::get<0>(ABC));
-    std::cout<<rstl::Tuple::get<1>(rstl::Tuple::get<0>(ABC));
-    
-    
-    rstl::Tuple::tuple<float, int, int> temp = rstl::Tuple::get<1>(ABC);
-    //std::cout<<rstl::Tuple::get<0>(rstl::Tuple::get<1>(ABC));
-    //std::cout<<rstl::Tuple::get<1>(rstl::Tuple::get<1>(ABC));
+    rstl::Tuple::tuple<rstl::Tuple::tuple<double, float, float>, rstl::Tuple::tuple<float, int>> ABC = make_tuple(t1, t2);
+    std::cout<<"Second Printing----";
+    std::cout<<rstl::Tuple::get<0>(rstl::Tuple::get<0>(ABC))<<" ";
+    std::cout<<rstl::Tuple::get<1>(rstl::Tuple::get<0>(ABC))<<" ";
+    std::cout<<rstl::Tuple::get<2>(rstl::Tuple::get<0>(ABC))<<" ";
+    std::cout<<"Second Tuple\n";
+    std::cout<<rstl::Tuple::get<0>(rstl::Tuple::get<1>(ABC))<<" ";
+    std::cout<<rstl::Tuple::get<1>(rstl::Tuple::get<1>(ABC))<<" ";
 
     tuple tCounter = make_tuple(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
 
-    //showTupleVals(tCounter, junk);
+    std::cout<<std::endl<<std::endl<<std::endl;
+    showTupleVals(tCounter, junk);
 
     //printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
 
