@@ -36,6 +36,12 @@ struct Repeat
   constexpr static size_t Value = Last;
 };
 
+template <size_t Last>
+struct Zero
+{
+  constexpr static size_t Value = 0;
+};
+
 template <size_t N>
 using make_index_list = typename make_helper<0, N - 1, Increment, 0>::result;
 
@@ -47,8 +53,8 @@ struct make_repeat_from_tuples_helper {
   using result = Index_List<Is...>;
 };
 
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, typename Enabled = void, size_t ...Is>
-struct make_range_from_tuples_helper {
+template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, typename Enabled = void, size_t ...Is>
+struct make_index_list_from_tuples_helper {
   using result = Index_List<Is...>;
 };
 
@@ -82,55 +88,31 @@ using tuple_has_more = std::enable_if_t<
   std::is_void_v<std::void_t<typename CurrentTuple::TailType>> 
 >;
 
-// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_repeat_from_tuples_helper<Current + 1, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
+template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, NextTupleValuePolicy<Current>::Value, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
 };
 
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_repeat_from_tuples_helper<Current + 1, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void, Is..., Current>::result;
+template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, NextTupleValuePolicy<Current>::Value, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void, Is..., Current>::result;
 };
 
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_no_more<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_repeat_from_tuples_helper<Current, void, void, void, Is..., Current>::result;
+template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_no_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, void, void, void, Is..., Current>::result;
 };
 
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_has_more<CurrentTuple>, Is...> {
-  using result = typename make_repeat_from_tuples_helper<Current, typename CurrentTuple::TailType, TupleOfTuples, void, Is..., Current>::result;
-};
-
-template <typename TupleOfTuples>
-using make_repeat_index_list_from_tuples = typename make_repeat_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
-
-// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_range_from_tuples_helper<0, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
-};
-
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_range_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void, Is..., Current>::result;
-};
-
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_no_more<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_range_from_tuples_helper<Current, void, void, void, Is..., Current>::result;
-};
-
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_has_more<CurrentTuple>, Is...> {
-  using result = typename make_range_from_tuples_helper<Current + 1, typename CurrentTuple::TailType, TupleOfTuples, void, Is..., Current>::result;
+template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_has_more<CurrentTuple>, Is...> {
+  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, NextValueValuePolicy<Current>::Value, typename CurrentTuple::TailType, TupleOfTuples, void, Is..., Current>::result;
 };
 
 template <typename TupleOfTuples>
-using make_range_index_list_from_tuples = typename make_range_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
+using make_range_index_list_from_tuples = typename make_index_list_from_tuples_helper<Zero, Increment, 0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
+
+template <typename TupleOfTuples>
+using make_repeat_index_list_from_tuples = typename make_index_list_from_tuples_helper<Increment, Repeat, 0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
 
 
 namespace Tuple
