@@ -47,6 +47,11 @@ struct make_repeat_from_tuples_helper {
   using result = Index_List<Is...>;
 };
 
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, typename Enabled = void, size_t ...Is>
+struct make_range_from_tuples_helper {
+  using result = Index_List<Is...>;
+};
+
 template<typename CurrentTuple, typename TupleOfTuples>
 using tuple_head_empty_with_just_head_after = std::enable_if_t<
   std::is_void_v<typename CurrentTuple::IsTerminal> 
@@ -77,6 +82,8 @@ using tuple_has_more = std::enable_if_t<
   std::is_void_v<std::void_t<typename CurrentTuple::TailType>> 
 >;
 
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
 struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
   using result = typename make_repeat_from_tuples_helper<Current + 1, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
@@ -99,6 +106,31 @@ struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tupl
 
 template <typename TupleOfTuples>
 using make_repeat_index_list_from_tuples = typename make_repeat_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_range_from_tuples_helper<0, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
+};
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_range_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void, Is..., Current>::result;
+};
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_no_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_range_from_tuples_helper<Current, void, void, void, Is..., Current>::result;
+};
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_range_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_has_more<CurrentTuple>, Is...> {
+  using result = typename make_range_from_tuples_helper<Current + 1, typename CurrentTuple::TailType, TupleOfTuples, void, Is..., Current>::result;
+};
+
+template <typename TupleOfTuples>
+using make_range_index_list_from_tuples = typename make_range_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
 
 
 namespace Tuple

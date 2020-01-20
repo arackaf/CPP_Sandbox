@@ -88,7 +88,21 @@ decltype(auto) XXX(Tuples ...tuples)
     // return XYZ(tuples, tuplesIndexList);  
 }
 
+template <size_t ...Is, size_t ...Js, typename ...Tuples>
+decltype(auto) tuple_cat_2_helper(rstl::Index_List<Is...>, rstl::Index_List<Js...>, Tuples ...tuples)
+{
+    decltype(auto) tupleOfTuples = make_tuple(tuples...);
+    return make_tuple(rstl::Tuple::get<Js>(rstl::Tuple::get<Is>(tupleOfTuples))...);
+}
 
+template <typename ...Tuples>
+decltype(auto) tuple_cat_2(Tuples ...tuples)
+{
+    decltype(auto) repeatRange = rstl::make_repeat_index_list_from_tuples<decltype(make_tuple(tuples...))>{};
+    decltype(auto) rangeRange = rstl::make_range_index_list_from_tuples<decltype(make_tuple(tuples...))>{};
+
+    return tuple_cat_2_helper(repeatRange, rangeRange, tuples...);
+}
 
 
 int main(int argc, const char *argv[])
@@ -110,7 +124,8 @@ int main(int argc, const char *argv[])
     XXX(t1, t2);
 
     //decltype(auto) junk = rstl::make_repeat_index_list_from_tuples<rstl::Tuple::tuple<rstl::Tuple::tuple<float, double, int>, rstl::Tuple::tuple<float, int>>>{};
-    decltype(auto) junk = rstl::make_repeat_index_list_from_tuples<decltype(make_tuple(make_tuple(1, 2, 3, 4, 5, 6, 7, 8), t2, t1, t2, make_tuple(1, 2, 3, 4, 5)))>{};
+    decltype(auto) repeatRange = rstl::make_repeat_index_list_from_tuples<decltype(make_tuple(make_tuple(1, 2, 3, 4, 5, 6, 7, 8), t2, t1, t2, make_tuple(1, 2, 3, 4, 5)))>{};
+    decltype(auto) rangeRange = rstl::make_range_index_list_from_tuples<decltype(make_tuple(make_tuple(1, 2, 3, 4, 5, 6, 7, 8), t2, t1, t2, make_tuple(1, 2, 3, 4, 5)))>{};
 
 
     rstl::Tuple::tuple<rstl::Tuple::tuple<double, float, float>, rstl::Tuple::tuple<float, int>> ABC = make_tuple(t1, t2);
@@ -125,7 +140,14 @@ int main(int argc, const char *argv[])
     tuple tCounter = make_tuple(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
 
     std::cout<<std::endl<<std::endl<<std::endl;
-    showTupleVals(tCounter, junk);
+    showTupleVals(tCounter, repeatRange);
+
+    std::cout<<std::endl<<std::endl<<std::endl;
+    showTupleVals(tCounter, rangeRange);
+
+    std::cout<<"\n\n----- HERE WE GO -----\n\n";
+
+    printTuple(tuple_cat_2(t1, t2, make_tuple(1, 2, 3, 4, 5), t2, t1));
 
     //printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
 
