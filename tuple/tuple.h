@@ -59,21 +59,10 @@ struct make_index_list_from_tuples_helper {
 };
 
 template<typename CurrentTuple, typename TupleOfTuples>
-using tuple_head_empty_with_just_head_after = std::enable_if_t<
-  std::is_void_v<typename CurrentTuple::IsTerminal> 
-    && 
-  std::is_void_v<std::void_t<typename TupleOfTuples::HeadType>>
-    &&
-  TupleOfTuples::length == 1
->;
-
-template<typename CurrentTuple, typename TupleOfTuples>
 using tuple_head_empty_with_more = std::enable_if_t<
-  std::is_void_v<typename CurrentTuple::IsTerminal> 
-    && 
-  std::is_void_v<std::void_t<typename TupleOfTuples::HeadType>>
-    &&
-  std::is_void_v<std::void_t<typename TupleOfTuples::TailType>>
+  std::is_void_v<typename CurrentTuple::IsTerminal>
+  &&
+  !std::is_void_v<TupleOfTuples>
 >;
 
 template<typename CurrentTuple, typename TupleOfTuples>
@@ -85,13 +74,8 @@ using tuple_head_empty_with_no_more = std::enable_if_t<
 
 template<typename CurrentTuple>
 using tuple_has_more = std::enable_if_t<
-  std::is_void_v<std::void_t<typename CurrentTuple::TailType>> 
+  !std::is_void_v<typename CurrentTuple::TailType> 
 >;
-
-template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, NextTupleValuePolicy<Current>::Value, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
-};
 
 template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
 struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
@@ -118,6 +102,12 @@ using make_repeat_index_list_from_tuples = typename make_index_list_from_tuples_
 namespace Tuple
 {
 
+template <typename ...Tuples>
+struct FlattenedTuplesType 
+{
+
+};
+
 template <typename T, typename... Rest>
 class tuple
 {
@@ -140,6 +130,7 @@ class tuple<T>
 public:
   using HeadType = T;
   using IsTerminal = void;
+  using TailType = void;
   constexpr static size_t length = 1;
 
   tuple() {}
