@@ -42,6 +42,68 @@ using make_index_list = typename make_helper<0, N - 1, Increment, 0>::result;
 template <size_t Value, size_t Count>
 using make_repeat_index_list = typename make_helper<0, Count - 1, Repeat, Value>::result;
 
+
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, typename Enabled = void, size_t ...Is>
+struct make_repeat_from_tuples_helper {
+  using result = Index_List<Is...>;
+};
+
+
+template<typename CurrentTuple, typename TupleOfTuples>
+using tuple_head_empty_with_just_head_after = std::enable_if_t<
+  std::is_void_v<typename CurrentTuple::HeadType::IsTerminal> 
+    && 
+  std::is_void_v<std::void_t<typename TupleOfTuples::HeadType>>
+    &&
+  !std::is_void_v<std::void_t<typename TupleOfTuples::HeadType::TailType>>
+>;
+
+template<typename CurrentTuple, typename TupleOfTuples>
+using tuple_head_empty_with_more = std::enable_if_t<
+  std::is_void_v<typename CurrentTuple::HeadType::IsTerminal> 
+    && 
+  std::is_void_v<std::void_t<typename TupleOfTuples::HeadType>>
+    &&
+  std::is_void_v<std::void_t<typename TupleOfTuples::HeadType::TailType>>
+>;
+
+template<typename CurrentTuple, typename TupleOfTuples>
+using tuple_head_empty_with_no_more = std::enable_if_t<
+  std::is_void_v<typename CurrentTuple::HeadType::IsTerminal> 
+    && 
+  !std::is_void_v<std::void_t<typename TupleOfTuples::HeadType>>
+>;
+
+template<typename CurrentTuple>
+using tuple_head_not_empty = std::enable_if_t<
+  !std::is_void_v<typename CurrentTuple::HeadType::IsTerminal> 
+>;
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_just_head_after<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_repeat_from_tuples_helper<Current + 1, typename TupleOfTuples::HeadType, void, void, Is..., Current>::result;
+};
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_repeat_from_tuples_helper<Current + 1, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void, Is..., Current>::result;
+};
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_no_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_repeat_from_tuples_helper<Current, void, void, void, Is..., Current>::result;
+};
+
+template <size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
+struct make_repeat_from_tuples_helper<Current, CurrentTuple, TupleOfTuples, tuple_head_not_empty<CurrentTuple>, Is...> {
+  using result = typename make_repeat_from_tuples_helper<Current, typename CurrentTuple::TailType, TupleOfTuples, void, Is..., Current>::result;
+};
+
+template <typename TupleOfTuples>
+using make_repeat_index_list_from_tuples = typename make_repeat_from_tuples_helper<0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void>::result;
+
+
 namespace Tuple
 {
 
@@ -49,7 +111,11 @@ template <typename T, typename... Rest>
 class tuple
 {
 public:
+  using HeadType = T;
+  using TailType = tuple<Rest...>;
   constexpr static size_t length = 1 + tuple<Rest...>::length;
+
+  tuple(tuple<T, Rest...> &t) : head(t.head), tail(t.tail) {}
   tuple(T head, Rest... tail) : head(head), tail(tail...) {}
 
   T head;
@@ -61,6 +127,8 @@ template <typename T>
 class tuple<T>
 {
 public:
+  using HeadType = T;
+  using IsTerminal = void;
   constexpr static size_t length = 1;
 
   tuple(T head) : head(head) {}

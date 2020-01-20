@@ -95,18 +95,32 @@ int main(int argc, const char *argv[])
 {
     //doPrintPassthrough("Hello", "There", 1, 2, 3, 4.5, "Fool");
 
-    tuple t1 = make_tuple(7.2, 9.3f);
+    tuple t1 = make_tuple(7.2, 9.3f, 9.9f);
 
     //double d = get<1>(t1);
     //auto f = get<2>(t1);
 
-    tuple t2 = make_tuple(2.1f, 5);
+    tuple t2 = make_tuple(2.1f, 5, 9);
     
     XXX(t1, t2);
 
+    rstl::Index_List junk = rstl::make_repeat_index_list_from_tuples<decltype(make_tuple(t1, t2))>{};
+
+
+    rstl::Tuple::tuple<rstl::Tuple::tuple<double, float, float>, rstl::Tuple::tuple<float, int, int>> ABC = make_tuple(t1, t2);
+    std::cout<<rstl::Tuple::get<0>(rstl::Tuple::get<0>(ABC));
+    std::cout<<rstl::Tuple::get<1>(rstl::Tuple::get<0>(ABC));
+    
+    
+    rstl::Tuple::tuple<float, int, int> temp = rstl::Tuple::get<1>(ABC);
+    //std::cout<<rstl::Tuple::get<0>(rstl::Tuple::get<1>(ABC));
+    //std::cout<<rstl::Tuple::get<1>(rstl::Tuple::get<1>(ABC));
+
     tuple tCounter = make_tuple(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
 
-    printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
+    //showTupleVals(tCounter, junk);
+
+    //printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
 
     //showTupleVals(t2, rstl::make_index_list<5>{});
 
