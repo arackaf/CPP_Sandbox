@@ -89,10 +89,10 @@ decltype(auto) XXX(Tuples ...tuples)
 }
 
 template <size_t ...Is, size_t ...Js, typename ...Tuples>
-decltype(auto) tuple_cat_2_helper(rstl::Index_List<Is...>, rstl::Index_List<Js...>, Tuples ...tuples)
+decltype(auto) tuple_cat_2_helper(rstl::Index_List<Is...>, rstl::Index_List<Js...>, Tuples&& ...tuples)
 {
     decltype(auto) tupleOfTuples = make_tuple(tuples...);
-    return make_tuple(rstl::Tuple::get<Js>(rstl::Tuple::get<Is>(tupleOfTuples))...);
+    return rstl::Tuple::make_tuple(rstl::Tuple::get<Js>(rstl::Tuple::get<Is>(tupleOfTuples))...);
 }
 
 template <typename ...Tuples>
