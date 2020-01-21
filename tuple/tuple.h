@@ -48,16 +48,6 @@ using make_index_list = typename make_helper<0, N - 1, Increment, 0>::result;
 template <size_t Value, size_t Count>
 using make_repeat_index_list = typename make_helper<0, Count - 1, Repeat, Value>::result;
 
-template <size_t Current, typename CurrentTuple, typename TupleOfTuples, typename Enabled = void, size_t ...Is>
-struct make_repeat_from_tuples_helper {
-  using result = Index_List<Is...>;
-};
-
-template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, typename Enabled = void, size_t ...Is>
-struct make_index_list_from_tuples_helper {
-  using result = Index_List<Is...>;
-};
-
 template<typename CurrentTuple, typename TupleOfTuples>
 using has_more = std::enable_if_t<
   !CurrentTuple::IsTerminal::value
@@ -102,16 +92,15 @@ struct GetNextCountingValue {
   static constexpr size_t value = CurrentTuple::IsTerminal::value ? NextTupleValuePolicy<Current>::Value : NextValueValuePolicy<Current>::Value;
 };
 
+template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, typename = void, size_t ...Is> 
+struct make_index_list_from_tuples_helper {
+  using result = Index_List<Is..., Current>;
+};
+
 template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
 struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, has_more<CurrentTuple, TupleOfTuples>, Is...> {
   using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, GetNextCountingValue<Current, CurrentTuple, NextTupleValuePolicy, NextValueValuePolicy>::value, typename GetNextValue<CurrentTuple, TupleOfTuples>::Type, typename GetNextTail<CurrentTuple, TupleOfTuples>::Type, void, Is..., Current>::result;
 };
-
-template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_no_more<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, void, void, void, Is..., Current>::result;
-};
-
 
 template <typename TupleOfTuples>
 using make_range_index_list_from_tuples = typename make_index_list_from_tuples_helper<Zero, Increment, 0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
