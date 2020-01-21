@@ -149,6 +149,10 @@ int main(int argc, const char *argv[])
 
     printTuple(tuple_cat_2(t1, t2, make_tuple(1, 2, 3, 4, 5), t2, t1));
 
+    std::cout<<"\n\n----- HERE WE GO 2 -----\n\n";
+
+    printTuple(tuple_cat_2(make_tuple(1, 2), make_tuple(3), make_tuple(4, 5), make_tuple(6)));
+
     //printTuple(tuple_cat(t1, t2, make_tuple("one", "two", "C")));
 
     //showTupleVals(t2, rstl::make_index_list<5>{});

@@ -59,27 +59,52 @@ struct make_index_list_from_tuples_helper {
 };
 
 template<typename CurrentTuple, typename TupleOfTuples>
-using tuple_head_empty_with_more = std::enable_if_t<
-  std::is_void_v<typename CurrentTuple::IsTerminal>
-  &&
+using has_more = std::enable_if_t<
+  !CurrentTuple::IsTerminal::value
+  ||
   !std::is_void_v<TupleOfTuples>
 >;
 
 template<typename CurrentTuple, typename TupleOfTuples>
 using tuple_head_empty_with_no_more = std::enable_if_t<
-  std::is_void_v<typename CurrentTuple::IsTerminal> 
+  CurrentTuple::IsTerminal::value 
     && 
   std::is_void_v<TupleOfTuples>
 >;
 
-template<typename CurrentTuple>
-using tuple_has_more = std::enable_if_t<
-  !std::is_void_v<typename CurrentTuple::TailType> 
->;
+template <typename Tuple>
+struct PluckHead {
+  using Result = typename Tuple::HeadType;
+};
+
+template <typename Tuple>
+struct Identity {
+  using Result = Tuple;
+};
+
+template <typename Tuple>
+struct PluckTail {
+  using Result = typename Tuple::TailType;
+};
+
+template <typename CurrentTuple, typename TupleOfTuples>
+struct GetNextValue {
+  using Type = typename std::conditional_t<CurrentTuple::IsTerminal::value, PluckHead<TupleOfTuples>, PluckTail<CurrentTuple>>::Result;
+};
+
+template <typename CurrentTuple, typename TupleOfTuples>
+struct GetNextTail {
+  using Type = typename std::conditional_t<CurrentTuple::IsTerminal::value, PluckTail<TupleOfTuples>, Identity<TupleOfTuples>>::Result;
+};
+
+template <size_t Current, typename CurrentTuple, template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy>
+struct GetNextCountingValue {
+  static constexpr size_t value = CurrentTuple::IsTerminal::value ? NextTupleValuePolicy<Current>::Value : NextValueValuePolicy<Current>::Value;
+};
 
 template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_head_empty_with_more<CurrentTuple, TupleOfTuples>, Is...> {
-  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, NextTupleValuePolicy<Current>::Value, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType, void, Is..., Current>::result;
+struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, has_more<CurrentTuple, TupleOfTuples>, Is...> {
+  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, GetNextCountingValue<Current, CurrentTuple, NextTupleValuePolicy, NextValueValuePolicy>::value, typename GetNextValue<CurrentTuple, TupleOfTuples>::Type, typename GetNextTail<CurrentTuple, TupleOfTuples>::Type, void, Is..., Current>::result;
 };
 
 template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
@@ -87,10 +112,6 @@ struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePo
   using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, void, void, void, Is..., Current>::result;
 };
 
-template <template<size_t> typename NextTupleValuePolicy, template<size_t> typename NextValueValuePolicy, size_t Current, typename CurrentTuple, typename TupleOfTuples, size_t ...Is> 
-struct make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, Current, CurrentTuple, TupleOfTuples, tuple_has_more<CurrentTuple>, Is...> {
-  using result = typename make_index_list_from_tuples_helper<NextTupleValuePolicy, NextValueValuePolicy, NextValueValuePolicy<Current>::Value, typename CurrentTuple::TailType, TupleOfTuples, void, Is..., Current>::result;
-};
 
 template <typename TupleOfTuples>
 using make_range_index_list_from_tuples = typename make_index_list_from_tuples_helper<Zero, Increment, 0, typename TupleOfTuples::HeadType, typename TupleOfTuples::TailType>::result;
@@ -113,6 +134,7 @@ class tuple
 {
 public:
   using HeadType = T;
+  using IsTerminal = std::false_type;
   using TailType = tuple<Rest...>;
   constexpr static size_t length = 1 + tuple<Rest...>::length;
 
@@ -129,7 +151,7 @@ class tuple<T>
 {
 public:
   using HeadType = T;
-  using IsTerminal = void;
+  using IsTerminal = std::true_type;
   using TailType = void;
   constexpr static size_t length = 1;
 
